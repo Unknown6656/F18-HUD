@@ -144,6 +144,11 @@ start-page button {
     cursor: pointer;
 }
 
+start-page p {
+    padding: 10vmin;
+    text-align: center;
+}
+
 start-page + hud-container {
     filter: blur(50px);
 }
