@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html -debug thin>
+    <head>
+        <link rel="stylesheet" href="css/main.css"/>
+        <meta name="viewport" content="width=device-width,
+                                       height=device-height,
+                                       target-densitydpi=device-dpi,
+                                       initial-scale=1.0,
+                                       maximum-scale=1.0,
+                                       user-scalable=no"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+    </head>
+    <body>
+        <start-page>
+            <button id="start-button">Start</button>
+        </start-page>
+        <hud-container>
+            <main-hud>
+                <!-- DYNAMIC SCALES / LADDERS -->
+                <hud-element id="bank-angle-indicator"></hud-element>
+                <hud-element id="bank-angle-scale"></hud-element>
+                <hud-element id="pitch-ladder"></hud-element>
+                <hud-element id="heading-tape"></hud-element>
+                <hud-element id="flight-path-indicator">
+                    <flight-path-indicator></flight-path-indicator>
+                </hud-element>
+                <hud-element id="ghost-velocity-indicator">
+                    <ghost-velocity-indicator></ghost-velocity-indicator>
+                </hud-element>
+                <hud-element id="aoa-bracket">
+                    <aoa-tick pos></aoa-tick>
+                    <aoa-tick zero></aoa-tick>
+                    <aoa-tick neg></aoa-tick>
+                    <aoa-ball></aoa-ball>
+                </hud-element>
+                <hud-element id="waterline-indicator">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                         version="2.0"
+                         width="100%"
+                         height="100%"
+                         viewBox="0 0 120 40"
+                         preserveAspectRatio="xMidYMid meet">
+                        <polyline points="0,0 20,0 40,40 60,0 80,40 100,0 120,0"
+                                  fill="none"
+                                  stroke="var(--color-fg)"
+                                  stroke-width="calc(1.5 * var(--hud-line-thickness))"/>
+                    </svg>
+                </hud-element>
+
+                <!-- STATIC TEXT -->
+                <hud-element id="selected-weapon-indicator" crossed>A9M 0</hud-element>
+                <hud-element id="weapon-info">
+                    <table>
+                        <tr>
+                            <td key>A9M</td>
+                            <td value>0</td>
+                        </tr>
+                        <tr>
+                            <td key>GUN</td>
+                            <td value>578</td>
+                        </tr>
+                    </table>
+                </hud-element>
+                <hud-element id="atc-info">
+                    ATC<br/>
+                    CPL SEQ1<br/>
+                    4.5 STL
+                </hud-element>
+                <hud-element id="hud-mode-indicator" mode="L"></hud-element>
+
+                <!-- DYNAMIC TEXT -->
+                <hud-element id="time-indicator"></hud-element>
+                <hud-element id="speed-indicator">
+                    <span boxed id="speed-indicator-value">0</span>
+                </hud-element>
+                <hud-element id="altitude-indicator">
+                    <span id="climb-rate-value">0</span>
+                    <span boxed id="altitude-indicator-value">0</span>
+                </hud-element>
+                <hud-element id="speed-g-aoa-info">
+                    <table>
+                        <tr>
+                            <td key alt-font>&alpha;</td>
+                            <td value id="angle-of-attack-value">0.0</td>
+                        </tr>
+                        <tr>
+                            <td key>M</td>
+                            <td value id="mach-speed-value">0.00</td>
+                        </tr>
+                        <tr>
+                            <td key>G</td>
+                            <td value id="g-load-value">0.00</td>
+                        </tr>
+                        <tr>
+                            <td key></td>
+                            <td value id="g-peak-value">0.00</td>
+                        </tr>
+                    </table>
+                </hud-element>
+            </main-hud>
+        </hud-container>
+        <script src="js/jquery.js"></script>
+        <script src="js/css-calc.js"></script>
+        <script src="js/cookie.js"></script>
+        <script src="js/script.js"></script>
+    </body>
+</html>
