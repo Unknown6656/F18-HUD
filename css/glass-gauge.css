@@ -1,0 +1,9 @@
+@charset "utf-8";
+
+@font-face {
+    font-family: 'GlassGauge';
+    src: url('../font/glass-gauge.ttf') format('truetype'),
+         url('../font/glass-gauge.woff') format('woff'),
+         url('../font/glass-gauge.woff2') format('woff2');
+    font-weight: normal;
+}

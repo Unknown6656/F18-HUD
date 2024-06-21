@@ -1,0 +1,704 @@
+@charset "utf-8";
+@import url('glass-gauge.css');
+@import url('hornet-display.css');
+
+/*
+ORIGINAL ASPECT RATIO:              250:300     0.8333
+IPAD PRO 11" 3RD GEN ASPECT RATIO:  1668:2388   0.69849246231
+*/
+
+:root {
+    --color-bg: black;
+    --color-fg: lawngreen;
+    --hud-height: unset;
+    --hud-width: unset;
+    --hud-aspect-ratio: 0.69849246231;
+    --hud-line-thickness: calc(var(--hud-width) * .007);
+    --font-size: calc(var(--hud-width) * .05);
+
+    /* size of 1 HUD degree in terms of HUD size */
+    --yaw-degree-size: calc(var(--hud-width) * .035);
+    --pitch-degree-size: calc(var(--hud-height) * .055);
+
+    --current-aoa-offset: 0%;
+    --current-pitch-aoa: 0deg;
+    --current-pitch-angle: 0deg;
+    --current-yaw-angle: 0deg;
+    --current-roll-angle: 0deg;
+    --inertia-pitch-angle: 0deg;
+    --inertia-yaw-angle: 0deg;
+    --target-pitch-angle: 0deg;
+    --target-roll-angle: 0deg;
+    --target-yaw-angle: 0deg;
+    --pitch-offset: 0;
+    --roll-offset: 0;
+    --yaw-offset: 0;
+
+    --text-shadow-size: 0px;
+    --font-weight: normal;
+    --font-family: 'GlassGauge';
+
+    /* letter-spacing: 0px; */
+    line-height: var(--font-size);
+    font-size: var(--font-size);
+    font-variant: full-width;
+
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+}
+
+:root[thin] {
+    /* --text-shadow-size: 1px; */
+    --font-weight: bold;
+    --font-family: 'HornetDisplay', 'Cascadia Code', 'Courier New', 'Consolas', monospace;
+}
+
+@media (min-aspect-ratio: 1668/2388) {
+    :root {
+        --hud-height: 100vh;
+        --hud-width: calc(100vh * var(--hud-aspect-ratio));
+    }
+}
+
+@media (max-aspect-ratio: 1668/2388) {
+    :root {
+        --hud-height: calc(100vw / var(--hud-aspect-ratio));
+        --hud-width: 100vw;
+    }
+}
+
+:root, * {
+    font-weight: var(--font-weight);
+    text-shadow: var(--text-shadow-size) 0 currentcolor;
+    font-family: var(--font-family);
+    margin: 0;
+}
+
+:root, *, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:root, body {
+    touch-action: pan-x pan-y;
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+}
+
+:root[debug] * {
+    /* outline: 1px solid red; */
+    outline-offset: -1px;
+     /* outer cyan */
+}
+
+[alt-font] {
+    font-family: 'Bahnschrift', 'Cascadia Code', 'Courier New', 'Consolas', monospace;
+    font-weight: normal;
+    text-shadow: none;
+}
+
+[hidden] {
+    visibility: hidden;
+}
+
+[blink] {
+    animation: blink 1s infinite steps(1);
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+start-page,
+hud-container {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    overflow: hidden;
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+start-page {
+    z-index: 900;
+    height: 100vh;
+    width: 100vw;
+}
+
+start-page button {
+    border: var(--hud-line-thickness) solid var(--color-fg);
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    min-height: 10vh;
+    min-width: 25vw;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+start-page + hud-container {
+    filter: blur(50px);
+}
+
+:root:not([debug]) hud-container {
+    transform: scaleX(-1) rotate(180deg);
+}
+
+main-hud {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    height: var(--hud-height);
+    width: var(--hud-width);
+}
+
+:root[debug] main-hud {
+    /* background-color: white; */
+    background-image: url('../img/hud-cropped-inv.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-y: calc(var(--hud-height) * 0.138);
+    background-position-x: calc(var(--hud-width) * .004);
+}
+
+hud-element {
+    transform: translate(-50%,-50%);
+    mix-blend-mode: lighten;
+    position: absolute;
+    overflow: hidden;
+    display: block;
+}
+
+hud-element span[boxed] {
+    border: var(--hud-line-thickness) solid var(--color-fg);
+    text-align: right;
+    width: calc(var(--hud-width) * .16);
+    padding: 0 2px;
+    display: block;
+}
+
+hud-element#waterline-indicator {
+    height: calc(var(--hud-width) * .045);
+    width: calc(var(--hud-width) * .2);
+    transform: translate(-50%) rotate(var(--current-roll-angle)) translateY(-50%);
+    justify-content: center;
+    overflow: visible;
+    z-index: 50000;
+    display: flex;
+    left: 50%;
+    top: 50%;
+}
+
+hud-element#waterline-indicator svg {
+    transform: scaleY(.75) translateY(50%);
+    overflow: visible;
+}
+
+hud-element#flight-path-indicator,
+hud-element#ghost-velocity-indicator {
+    --computed-x-offset: 0px;
+    --computed-y-offset: 0px;
+
+    border-radius: 50%;
+    height: calc(var(--hud-width) * .11);
+    width: calc(var(--hud-width) * .14);
+    left: calc(50% - var(--computed-x-offset));
+    top: calc(50% + var(--computed-y-offset));
+}
+
+hud-element#flight-path-indicator {
+    --indicator-size: calc(var(--hud-width) * .05);
+}
+
+hud-element#flight-path-indicator flight-path-indicator {
+    background-color: var(--color-bg);
+    perspective-origin: center;
+    transform-style: preserve-3d;
+    border-radius: 50%;
+    perspective: 10000px;
+    transform: translate(-50%, -50%);
+    position: relative;
+    display: block;
+    border: var(--hud-line-thickness) solid var(--color-fg);
+    height: var(--indicator-size);
+    width: var(--indicator-size);
+    left: 50%;
+    top: 50%;
+}
+
+hud-element#flight-path-indicator flight-path-indicator::before,
+hud-element#flight-path-indicator flight-path-indicator::after {
+    background-color: var(--color-fg);
+    transform-style: preserve-3d;
+    position: absolute;
+    display: block;
+    content: '';
+    z-index: -1;
+}
+
+hud-element#flight-path-indicator flight-path-indicator::before {
+    transform: translate(-50%, 0%) translateZ(-1px);
+    background-color: var(--color-fg);
+    width: var(--hud-line-thickness);
+    height: 200%;
+    left: 50%;
+    top: -150%;
+}
+
+hud-element#flight-path-indicator flight-path-indicator::after {
+    transform: translate(0%, -50%) translateZ(-1px);
+    height: var(--hud-line-thickness);
+    width: 400%;
+    left: -150%;
+    top: 50%;
+}
+
+hud-element#ghost-velocity-indicator {
+    --indicator-size: calc(var(--hud-width) * .035);
+}
+
+hud-element#ghost-velocity-indicator::before,
+hud-element#ghost-velocity-indicator::after {
+    border-bottom: var(--hud-line-thickness) solid var(--color-fg);
+    transform: translateY(-50%);
+    position: absolute;
+    display: block;
+    content: '';
+    height: 0px;
+    width: var(--indicator-size);
+    top: 50%;
+}
+
+hud-element#ghost-velocity-indicator::before {
+    left: 0%;
+}
+
+hud-element#ghost-velocity-indicator::after {
+    right: 0%;
+}
+
+hud-element#ghost-velocity-indicator ghost-velocity-indicator {
+    border-right: var(--hud-line-thickness) solid var(--color-fg);
+    transform: translateX(-50%);
+    position: relative;
+    overflow: visible;
+    display: block;
+    height: var(--indicator-size);
+    width: 0px;
+    left: 50%;
+}
+
+hud-element#aoa-bracket {
+    border-left: var(--hud-line-thickness) solid var(--color-fg);
+    overflow: visible;
+    height: calc(var(--pitch-degree-size) * 2);
+    width: calc(var(--hud-width) * .02);
+    left: 40%;
+    top: 50%;
+}
+
+hud-element#aoa-bracket aoa-tick {
+    border-top: var(--hud-line-thickness) solid var(--color-fg);
+    transform: translate(calc(.2 * var(--hud-line-thickness)), -50%);
+    position: absolute;
+    display: block;
+    height: 0px;
+    width: calc(100% + var(--hud-line-thickness));
+    left: calc(0px - var(--hud-line-thickness));
+}
+
+hud-element#aoa-bracket aoa-tick[pos] {
+    top: 0%;
+}
+
+hud-element#aoa-bracket aoa-tick[zero] {
+    top: 50%;
+}
+
+hud-element#aoa-bracket aoa-tick[neg] {
+    top: 100%;
+}
+
+hud-element#aoa-bracket::after {
+    border: var(--hud-line-thickness) solid var(--color-fg);
+    transform: translate(0, -50%);
+    border-radius: 50%;
+    position: absolute;
+    display: block;
+    content: '';
+    height: calc(var(--hud-line-thickness) * 3);
+    width: calc(var(--hud-line-thickness) * 3);
+    top: calc(50% - var(--current-aoa-offset) * .5);
+}
+
+hud-element#aoa-bracket[blink]::after {
+    visibility: hidden;
+}
+
+hud-element#heading-tape {
+    --heading-tick-width: calc(var(--yaw-degree-size) * 5);
+    --heading: 0%;
+
+    height: calc(var(--hud-width) * .12);
+    width: calc(var(--heading-tick-width) * 7.5);
+    display: flex;
+    top: 15%;
+    left: 50%;
+}
+
+hud-element#heading-tape::after {
+    border: solid var(--color-fg);
+    border-width: 0 var(--hud-line-thickness) var(--hud-line-thickness) 0;
+    transform: translate(-50%, 30%) rotate(-135deg);
+    position: absolute;
+    display: block;
+    content: '';
+    padding: var(--hud-line-thickness);
+    height: calc(var(--hud-line-thickness) * 4.5);
+    width: calc(var(--hud-line-thickness) * 4.5);
+    bottom: 0;
+    left: 50%;
+}
+
+hud-element#heading-tape heading-tick {
+    flex-shrink: 0;
+    text-align: center;
+    position: relative;
+    display: block;
+    height: 100%;
+    width: var(--heading-tick-width);
+    transform: translateX(var(--heading));
+    left: -50%;
+}
+
+hud-element#heading-tape heading-tick::after {
+    background-color: var(--color-fg);
+    position: absolute;
+    content: '';
+    bottom: calc(var(--font-size) * .7);
+    width: var(--hud-line-thickness);
+    height: 25%;
+    left: 50%;
+}
+
+hud-element#heading-tape heading-tick[small]::after {
+    height: 15%;
+}
+
+hud-element#pitch-ladder {
+    --pitch-tick-height: calc(var(--pitch-degree-size) * 5);
+    --pitch-ladder-large-width: calc(var(--hud-width) * .90);
+    --pitch-ladder-small-width: calc(var(--hud-width) * .35);
+    --pitch-ladder-skew: 5deg;
+    --pitch: 0%;
+
+    transform: translate(-50%, -50%)
+               rotate(var(--current-roll-angle))
+               translate(0, calc(-1 * var(--pitch)));
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible;
+    display: flex;
+    height: calc(var(--hud-width));
+    width: var(--pitch-ladder-large-width);
+    left: 50%;
+    top: 50%;
+}
+
+hud-element#pitch-ladder pitch-ladder-tick {
+    flex-shrink: 0;
+    text-align: center;
+    position: relative;
+    display: block;
+    height: var(--pitch-tick-height);
+    width: var(--pitch-ladder-small-width);
+    top: calc(var(--pitch-tick-height) * .5);
+}
+
+hud-element#pitch-ladder pitch-ladder-tick[zero] {
+    width: var(--pitch-ladder-large-width);
+}
+
+hud-element#pitch-ladder pitch-ladder-tick left-bracket,
+hud-element#pitch-ladder pitch-ladder-tick right-bracket {
+    overflow: visible;
+    position: absolute;
+    display: block;
+    height: var(--font-size);
+    width: 40%;
+    top: 50%;
+}
+
+hud-element#pitch-ladder pitch-ladder-tick left-bracket {
+    border-left: var(--hud-line-thickness) solid var(--color-fg);
+    left: 0%;
+}
+
+hud-element#pitch-ladder pitch-ladder-tick right-bracket {
+    border-right: var(--hud-line-thickness) solid var(--color-fg);
+    right: 0%;
+}
+
+hud-element#pitch-ladder pitch-ladder-tick[pos] left-bracket,
+hud-element#pitch-ladder pitch-ladder-tick[neg] right-bracket {
+    transform: skewY(var(--pitch-ladder-skew)) translateY(-50%);
+}
+
+hud-element#pitch-ladder pitch-ladder-tick[pos] right-bracket,
+hud-element#pitch-ladder pitch-ladder-tick[neg] left-bracket {
+    transform: skewY(calc(0deg - var(--pitch-ladder-skew))) translateY(-50%);
+}
+
+hud-element#pitch-ladder pitch-ladder-tick[pos] left-bracket,
+hud-element#pitch-ladder pitch-ladder-tick[pos] right-bracket,
+hud-element#pitch-ladder pitch-ladder-tick[zero] left-bracket,
+hud-element#pitch-ladder pitch-ladder-tick[zero] right-bracket {
+    border-top: var(--hud-line-thickness) solid var(--color-fg);
+}
+
+hud-element#pitch-ladder pitch-ladder-tick[neg] left-bracket,
+hud-element#pitch-ladder pitch-ladder-tick[neg] right-bracket {
+    border-bottom: var(--hud-line-thickness) dashed var(--color-fg);
+}
+
+hud-element#pitch-ladder pitch-ladder-tick left-bracket[angle]::before,
+hud-element#pitch-ladder pitch-ladder-tick right-bracket[angle]::after {
+    position: absolute;
+    padding: 0 calc(var(--hud-line-thickness) * 2);
+    content: attr(angle);
+    display: block;
+    width: 100%;
+    top: calc(-.5 * var(--hud-line-thickness));
+}
+
+hud-element#pitch-ladder pitch-ladder-tick left-bracket[angle]::before {
+    text-align: right;
+    left: -100%;
+}
+
+hud-element#pitch-ladder pitch-ladder-tick right-bracket[angle]::after {
+    text-align: left;
+    right: -100%;
+}
+
+hud-element#pitch-ladder pitch-ladder-tick[pos] left-bracket[angle]::before,
+hud-element#pitch-ladder pitch-ladder-tick[neg] right-bracket[angle]::after {
+    transform: skewY(calc(0deg - var(--pitch-ladder-skew)));
+}
+
+hud-element#pitch-ladder pitch-ladder-tick[pos] right-bracket[angle]::after,
+hud-element#pitch-ladder pitch-ladder-tick[neg] left-bracket[angle]::before {
+    transform: skewY(var(--pitch-ladder-skew));
+}
+
+hud-element#atc-info,
+hud-element#weapon-info,
+hud-element#hud-mode-info,
+hud-element#speed-g-aoa-info,
+hud-element#selected-weapon-indicator {
+    transform: translate(-50%, 0%);
+}
+
+hud-element#speed-g-aoa-info {
+    overflow: visible;
+    z-index: 50001;
+    left: 15%;
+    top: 56%;
+}
+
+hud-element table,
+hud-element table tr,
+hud-element table tr td {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+hud-element table tr td {
+    text-align: right;
+}
+
+hud-element table tr td[key] {
+    width: calc(var(--hud-width) * .05);
+}
+
+hud-element table tr td[value] {
+    width: calc(var(--hud-width) * .15);
+}
+
+hud-element#altitude-indicator {
+    height: calc(var(--hud-width)* .12);
+    width: calc(var(--hud-width)* .15);
+    overflow: visible;
+    text-align: right;
+    left: 86%;
+    top: 23.5%;
+}
+
+hud-element#altitude-indicator::after {
+    animation: blink 1s infinite steps(1);
+    position: absolute;
+    content: 'B';
+    width: 100%;
+    left: 1em;
+    top: calc(1em + var(--hud-line-thickness));
+}
+
+hud-element#speed-indicator {
+    height: calc(var(--hud-width) * .06);
+    width: calc(var(--hud-width) * .19);
+    overflow: visible;
+    text-align: right;
+    left: 15%;
+    top: 25.2%;
+}
+
+hud-element#time-indicator {
+    text-align: left;
+    width: calc(var(--hud-width) * .25);
+    left: 15%;
+    top: 84%;
+}
+
+hud-element#atc-info {
+    width: calc(var(--hud-width) * .23);
+    text-align: right;
+    left: 85%;
+    top: 65%;
+}
+
+hud-element#weapon-info {
+    width: calc(var(--hud-width) * .23);
+    left: 85%;
+    top: 56%;
+}
+
+hud-element#selected-weapon-indicator {
+    width: calc(var(--hud-width) * .16);
+    text-align: center;
+    left: 50%;
+    top: 82%;
+}
+
+hud-element#selected-weapon-indicator[crossed]::before,
+hud-element#selected-weapon-indicator[crossed]::after {
+    --skew-angle: 16deg;
+
+    border-top: var(--hud-line-thickness) solid var(--color-fg);
+    transform: translate(-50%, -50%) skewY(var(--skew-angle));
+    position: absolute;
+    display: block;
+    content: '';
+    height: 100%;
+    width: 100%;
+    left:  50%;
+    top: 100%;
+}
+
+hud-element#selected-weapon-indicator[crossed]::before {
+    --skew-angle: -16deg;
+}
+
+hud-element#hud-mode-indicator {
+    width: calc(var(--hud-width) * .23);
+    overflow: visible;
+    text-align: left;
+    left: 15%;
+    top: 78%;
+}
+
+hud-element#hud-mode-indicator::before {
+    display: inline-block;
+    content: 'NWSHI\ANAV-' attr(mode);
+    position: relative;
+}
+
+hud-element#hud-mode-indicator[mode="AR" I]::before {
+    content: 'NWSHI\ANAV-A R';
+}
+
+hud-element#hud-mode-indicator[mode="AL" I]::before {
+    content: 'NWSHI\ANAV-A L';
+}
+
+hud-element#bank-angle-indicator {
+    width: calc(var(--hud-width) * .16);
+    text-align: center;
+    left: 50%;
+    top: 90%;
+}
+
+hud-element#bank-angle-scale {
+    --bank-angle-scale-size: calc(var(--hud-width) * 1.35);
+    --bank-angle-tick-size: calc(var(--hud-width) * .05);
+
+    transform: translate(-50%, -50%);
+    position: absolute;
+    overflow: visible;
+    display: block;
+    height: var(--bank-angle-scale-size);
+    width: var(--bank-angle-scale-size);
+    left: 50%;
+    top: 50%;
+}
+
+hud-element#bank-angle-scale bank-angle-triangle {
+    border-right: transparent solid var(--bank-angle-tick-size);
+    border-left: transparent solid var(--bank-angle-tick-size);
+    border-top: var(--color-fg) solid var(--bank-angle-tick-size);
+    transform: translate(-50%, -50%) scaleX(50%);
+    position: absolute;
+    display: block;
+    bottom: 0%;
+    height: 0;
+    width: 0;
+    left: 50%;
+}
+
+hud-element#bank-angle-scale bank-angle-triangle::before {
+    border-right: transparent solid calc(var(--bank-angle-tick-size) - 2 * var(--hud-line-thickness));
+    border-left: transparent solid calc(var(--bank-angle-tick-size) - 2 * var(--hud-line-thickness));
+    border-top: var(--color-bg) solid calc(var(--bank-angle-tick-size) - 2 * var(--hud-line-thickness));
+    transform: translate(-50%, calc(-100% - 2 * var(--hud-line-thickness)));
+    position: absolute;
+    display: block;
+    content: '';
+    height: 0;
+    width: 0;
+}
+
+hud-element#bank-angle-scale bank-angle-triangle::after {
+    border-top: var(--color-fg) solid var(--hud-line-thickness);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    display: block;
+    content: '';
+    width: calc(2 * var(--bank-angle-tick-size));
+    top: calc(0px - var(--bank-angle-tick-size));
+}
+
+hud-element#bank-angle-scale bank-angle-tick {
+    --bank-angle: unset;
+
+    transform: translate(-50%, -50%)
+               rotate(calc(var(--bank-angle) + var(--current-roll-angle)))
+               translate(0, calc(.5 * var(--bank-angle-scale-size)));
+    background-color: var(--color-fg);
+    position: absolute;
+    display: block;
+    height: var(--bank-angle-tick-size);
+    width: var(--hud-line-thickness);
+    left: 50%;
+    top: 50%;
+}
+
+/* TODO : waypoint indicator & heading/compass */
+/* TODO : distance to target (i.e. "2.8 TGT") */

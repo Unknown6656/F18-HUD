@@ -1,0 +1,17 @@
+@charset "utf-8";
+
+@font-face {
+    font-family: 'HornetDisplay';
+    src: url('../font/hornet-display-regular.ttf') format('truetype'),
+         url('../font/hornet-display-regular.woff') format('woff'),
+         url('../font/hornet-display-regular.woff2') format('woff2');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'HornetDisplay';
+    src: url('../font/hornet-display-bold.ttf') format('truetype'),
+         url('../font/hornet-display-bold.woff') format('woff'),
+         url('../font/hornet-display-bold.woff2') format('woff2');
+    font-weight: bold;
+}
