@@ -1,5 +1,8 @@
 > [!CAUTION]
-> ### Respect local traffic laws and maintain situational awareness at all times while driving! Neither this repository, the repository owners, or code contributors are responsible or liable in any way for any accidents or damages (legal or physical) which occurred whilst using this project.
+> ${\color{red}\textsf{Respect local traffic laws and maintain situational awareness at all times while driving!}}$
+> ${\color{red}\textsf{Neither this repository, the repository owners, or code contributors are responsible or}}$
+> ${\color{red}\textsf{liable in any way for any accidents or damages (legal or physical) which occurred whilst}}$
+> ${\color{red}\textsf{using this project.}}$
 
 
 # F/A-18 HUD
@@ -20,6 +23,16 @@ This will open a HTTPS web server listening at `0.0.0.0:180`. The usage of a web
 > This HUD has been optimized for the [2018 Apple iPad Pro 11" (3<sup>rd</sup> Generation)](https://support.apple.com/en-us/111897). The behaviour of the HUD may therefore vary on other devices.
 >
 > To change this, please modify the stylesheet `css/main.css` accordingly.
+
+## Re-building the list of ICAO airports
+The list of ICAO airports is built by crawling through https://skyvector.com/ and parsing the individual pages. In order to re-build the list, run the following command:
+```bash
+python tools/icao-airport-crawler.py
+```
+> [!NOTE]
+> Note that this will take a _very_ long time, as SkyVector is not the fastest site to crawl.
+
+
 
 # First post-installation steps
 In order to use the F-18 HUD, please follow these steps:
