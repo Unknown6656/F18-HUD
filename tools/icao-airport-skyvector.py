@@ -107,13 +107,13 @@ def parse_airport(url : str) -> dict[str, str] | None:
 os.chdir(os.path.dirname(__file__) + '/..')
 
 with open(FILE_AIRPORTS, 'w') as fp:
-    fp.write('const airports = [')
+    fp.write('const airports={')
 
     for url in get_links_recursive():
         if airport := parse_airport(url):
             print(f'{airport["name"]} ({airport["icao"]}): {airport["lat"]}, {airport["lon"]}, {airport["alt"]}')
 
-            fp.write(f'''{'{'}"name":"{airport["name"]}","icao":"{airport["icao"]}","lat":{airport["lat"]},"lon":{airport["lon"]},"alt":{airport["alt"]},{'}'},''')
+            fp.write(f'''"{airport["icao"]}":{'{'}"name":"{airport["name"]}","lat":{airport["lat"]},"lon":{airport["lon"]},"alt":{airport["alt"]},{'}'},''')
             fp.flush()
 
-    fp.write('];')
+    fp.write('};')

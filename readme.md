@@ -38,8 +38,10 @@ To (re-)build the list of known ICAO airports and waypoints, you may use one of 
     ```bash
     python tools/icao-airport-skyvector.py
     ```
-    > [!NOTE]
-    > Note that this will take a _very_ long time, as SkyVector is not the fastest site to crawl.
+
+> [!NOTE]
+> Note that the second method will take a _very_ long time, as SkyVector is not the fastest site to crawl.
+> Furthermore, SkyVector does not seem to have as many airports as OurAirports.
 
 Independent of the method used, the list of airports will be written to `js/airports.js`.
 
