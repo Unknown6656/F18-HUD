@@ -26,13 +26,22 @@ This will open a HTTPS web server listening at `0.0.0.0:180`. The usage of a web
 > To change this, please modify the stylesheet `css/main.css` accordingly.
 
 ## Re-building the list of ICAO airports
-The list of ICAO airports is built by crawling through https://skyvector.com/ and parsing the individual pages. In order to re-build the list, run the following command:
-```bash
-python tools/icao-airport-crawler.py
-```
-> [!NOTE]
-> Note that this will take a _very_ long time, as SkyVector is not the fastest site to crawl.
+To (re-)build the list of known ICAO airports and waypoints, you may use one of the following methods:
 
+1. **Our Airports**\
+    The list of ICAO airports is built by grabbing a CSV table from https://ourairports.com/ and and converting it. In order to re-build the list, run the following command:
+    ```bash
+    python tools/icao-airport-ourairports.py
+    ```
+2. **SkyVector**\
+    The list of ICAO airports is built by crawling through https://skyvector.com/ and parsing the individual pages. In order to re-build the list, run the following command:
+    ```bash
+    python tools/icao-airport-skyvector.py
+    ```
+    > [!NOTE]
+    > Note that this will take a _very_ long time, as SkyVector is not the fastest site to crawl.
+
+Independent of the method used, the list of airports will be written to `js/airports.js`.
 
 ##
 # First post-installation steps
