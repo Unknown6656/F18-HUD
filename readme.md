@@ -4,13 +4,14 @@
 > ${\color{red}\textsf{liable in any way for any accidents or damages (legal or physical) which occurred whilst}}$
 > ${\color{red}\textsf{using this project.}}$
 
-
+##
 # F/A-18 HUD
 This project is a minimalistic webpage replicating the head-up display (HUD) of an [McDonnell Douglas F/A-18 Hornet fighter jet](https://en.wikipedia.org/wiki/McDonnell_Douglas_F/A-18_Hornet).
 It is intended to be shown in full-screen mode on an Android- or iOS-Tablet, which is placed under a car's windscreen, in order to simulate the experience of sitting in an F/A-18 whilst driving:
 
 ![](img/usage-01.jpeg)
 
+##
 # Installation
 1. Clone this repository using `git clone https://github.com/Unknown6656/F18-HUD`
 2. Install python.
@@ -33,7 +34,7 @@ python tools/icao-airport-crawler.py
 > Note that this will take a _very_ long time, as SkyVector is not the fastest site to crawl.
 
 
-
+##
 # First post-installation steps
 In order to use the F-18 HUD, please follow these steps:
 
@@ -55,5 +56,6 @@ In order to use the F-18 HUD, please follow these steps:
 You're now set up to use the F/A-18 HUD in your car.
 
 
+##
 # Usage
 (TODO)
