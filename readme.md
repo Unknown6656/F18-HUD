@@ -4,14 +4,22 @@
 > ${\color{red}\textsf{liable in any way for any accidents or damages (legal or physical) which occurred whilst}}$
 > ${\color{red}\textsf{using this project.}}$
 
-##
+Table of contents:
+- [Introduction](#_intro)
+- [Installation](#_install)
+- [First Steps](#_first_steps)
+- [Usage](#_usage)
+
+
+## <a name="_intro"></a>
 # F/A-18 HUD
 This project is a minimalistic webpage replicating the head-up display (HUD) of an [McDonnell Douglas F/A-18 Hornet fighter jet](https://en.wikipedia.org/wiki/McDonnell_Douglas_F/A-18_Hornet).
 It is intended to be shown in full-screen mode on an Android- or iOS-Tablet, which is placed under a car's windscreen, in order to simulate the experience of sitting in an F/A-18 whilst driving:
 
 ![](img/usage-01.jpeg)
 
-##
+
+## <a name="_install"></a>
 # Installation
 1. Clone this repository using `git clone https://github.com/Unknown6656/F18-HUD`
 2. Install python.
@@ -24,6 +32,7 @@ This will open a HTTPS web server listening at `0.0.0.0:180`. The usage of a web
 > This HUD has been optimized for the [2018 Apple iPad Pro 11" (3<sup>rd</sup> Generation)](https://support.apple.com/en-us/111897). The behaviour of the HUD may therefore vary on other devices.
 >
 > To change this, please modify the stylesheet `css/main.css` accordingly.
+
 
 ## Re-building the list of ICAO airports
 To (re-)build the list of known ICAO airports and waypoints, you may use one of the following methods:
@@ -45,7 +54,8 @@ To (re-)build the list of known ICAO airports and waypoints, you may use one of 
 
 Independent of the method used, the list of airports will be written to `js/airports.js`.
 
-##
+
+## <a name="_first_steps"></a>
 # First post-installation steps
 In order to use the F-18 HUD, please follow these steps:
 
@@ -67,6 +77,11 @@ In order to use the F-18 HUD, please follow these steps:
 You're now set up to use the F/A-18 HUD in your car.
 
 
-##
+## <a name="_usage"></a>
 # Usage
-(TODO)
+The following image represents the general layout of the F/A-18 HUD:
+
+![](img/usage-09.jpeg)\
+_Please note that the iamge is mirrored along the vertical, as well as the horizontal axis. This is required for the correct display of the HUD in the car's windscreen._
+
+(TODO : explain the individual components, their function, and deviation from regular behaviour)
