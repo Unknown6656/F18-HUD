@@ -88,9 +88,8 @@ IPAD PRO 11" 3RD GEN ASPECT RATIO:  1668:2388   0.69849246231
 }
 
 :root[debug] * {
-    /* outline: 1px solid red; */
+    outline: 1px solid red;
     outline-offset: -1px;
-     /* outer cyan */
 }
 
 [alt-font] {
@@ -573,11 +572,46 @@ hud-element#time-indicator {
     top: 84%;
 }
 
-hud-element#atc-info {
-    width: calc(var(--hud-width) * .23);
+hud-element#atc-info,
+hud-element#nav-info {
+    width: calc(var(--hud-width) * .4);
+    transform: translateX(-100%);
     text-align: right;
-    left: 85%;
+    left: 96%;
+}
+
+hud-element#atc-info {
     top: 65%;
+}
+
+hud-element#nav-info {
+    top: 29%;
+}
+
+hud-element#nav-compass {
+    --nav-compass-size: calc(var(--hud-width) * .12);
+    --nav-compass-heading: 0deg;
+
+    border: var(--hud-line-thickness) solid var(--color-fg);
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    display: flex;
+    height: var(--nav-compass-size);
+    width: var(--nav-compass-size);
+    left: 11%;
+    top: 34%;
+}
+
+hud-element#nav-compass::after {
+    background-color: var(--color-fg);
+    height: calc(var(--nav-compass-size) * .35);
+    width: var(--hud-line-thickness);
+    transform: rotate(calc(var(--nav-compass-heading) - var(--current-yaw-angle))) translateY(calc(-.5 * var(--nav-compass-size)));
+    position: absolute;
+    display: block;
+    content: '';
 }
 
 hud-element#weapon-info {

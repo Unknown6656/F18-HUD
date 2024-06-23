@@ -87,6 +87,8 @@ const hud_mode_indicator = $('#hud-mode-indicator');
 const aoa_bracket = $('#aoa-bracket');
 const debug = root.hasAttr('debug');
 
+let closest_airport = [undefined, undefined];
+let closest_icao_cache = undefined;
 let last_ts_orientation = -1;
 let last_ts_motion = -1;
 let last_location = undefined;
@@ -353,18 +355,11 @@ function set_location(event)
 
         set_speed(speed, climb_rate);
         set_inertia_yaw(heading);
-
-        // $('#atc-info').html(`
-        //     ${lat.toFixed(6)}°<br>
-        //     ${lon.toFixed(6)}°<br>
-        //     ${alt.toFixed(4)}m<br>
-        //     ${err.toFixed(4)}m<br>
-        //     ${dist.toFixed(4)}m<br>
-        //     ${speed.toFixed(4)}mps<br>
-        // `);
     }
 
     last_location = event;
+
+    display_nearest_airport(lat, lon, alt, err);
 }
 
 function WGS84_distance(lat1, lon1, lat2, lon2)
@@ -390,6 +385,54 @@ function WGS84_orientation(lat1, lon1, lat2, lon2)
               Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon_delta);
 
     return normalize_angle(Math.atan2(y, x) / DEG_TO_RAD);
+}
+
+function update_airport_distance(lat, lon)
+{
+    let nearest = [];
+    let mindist = Number.MAX_SAFE_INTEGER + .1;
+    let keys = Object.keys(airports);
+
+    if (closest_icao_cache)
+        keys = closest_icao_cache.concat(keys.filter(icao => !closest_icao_cache.includes(icao)));
+
+    for (const icao of keys)
+    {
+        const airport = airports[icao];
+        const currdist = WGS84_distance(lat, lon, airport['lat'], airport['lon']);
+
+        if (currdist < mindist)
+        {
+            mindist = currdist;
+            closest_airport = [icao, currdist];
+            nearest.unshift(icao);
+        }
+        else if (mindist < 500)
+            break; // distance to nearest airport is .5km. It's safe to assume that there is no closer airfield.
+    }
+
+    closest_icao_cache = nearest;
+}
+
+function display_nearest_airport(lat, lon, alt, err)
+{
+    update_airport_distance(lat, lon);
+
+    const [icao, dist] = closest_airport;
+
+    // if (!icao)
+    //     update_airport_distance(lat, lon);
+
+    const airport = airports[icao];
+    const dir = WGS84_orientation(lat, lon, airport['lat'], airport['lon']);
+    const vdist = alt * 3.28084 - airport['alt'];
+
+    $('#nav-info').html(`
+        ${icao}<br/>
+        ${Math.round(vdist)} WYPT<br/>
+        ${(dist / 1852).toFixed(1)} TGT
+    `);
+    $('#nav-compass').text(Math.round(dir).toString().padStart(3, '0')).css('--nav-compass-heading', `${dir}deg`);
 }
 
 function build_bank_angle_scale()
@@ -493,7 +536,7 @@ function reset()
     heading_offset = undefined;
 }
 
-async function start()
+async function start(origin = undefined)
 {
     $('start-page').remove();
 
@@ -523,7 +566,7 @@ async function start()
     on_device_orientation_changed();
     setInterval(set_time, 500);
 
-    if (!debug)
+    if (!debug && origin)
         make_fullscreen();
 }
 
@@ -533,9 +576,6 @@ function autostart()
     peak_g = Number(Cookies.get(COOKIE_MAX_GLOAD) || '0');
 
     start();
-
-    if (!debug)
-        make_fullscreen();
 }
 
 function make_fullscreen()
@@ -579,7 +619,8 @@ hud_mode_indicator.click(switch_orientation);
 $('#start-button').click(() =>
 {
     Cookies.set(COOKIE_HAS_INTERACTED, 'true', { expires: 30 });
-    start();
+
+    start(this);
 });
 $('#waterline-indicator').click(make_fullscreen);
 $('#speed-g-aoa-info *, #speed-g-aoa-info').click(() => 
