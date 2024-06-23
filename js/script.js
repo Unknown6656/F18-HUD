@@ -104,6 +104,8 @@ const curr_pitch = new smoothing(0, .05);
 let target_yaw = 0.0;
 let target_roll = 0.0;
 let target_pitch = 0.0;
+let waypoint_yaw = 0.0;
+let waypoint_pitch = 0.0;
 
 // should be represented by the flight path indicator
 let inertia_yaw = 0.0;
@@ -141,7 +143,8 @@ function set_yaw(angle)
     heading_tape.html(html + '<heading-tick small></heading-tick>')
                 .css('--heading', `${offset}%`);
     // setTimeout(() => heading_tape.css('--heading', `${offset}%`), 0); // animation is not smooth without this
-    root.css('--current-yaw-angle', `${angle}deg`);
+    root.css('--current-yaw-angle', `${angle}deg`)
+        .css('--waypoint-yaw-offset', `${waypoint_yaw - curr_yaw.last}`);
 
     set_target_yaw(target_yaw);
 }
@@ -185,7 +188,8 @@ function set_pitch(angle)
 
     pitch_ladder.html(html + '<pitch-ladder-tick></pitch-ladder-tick>')
                 .css('--pitch', `${offset}%`);
-    root.css('--current-pitch-angle', `${angle}deg`);
+    root.css('--current-pitch-angle', `${angle}deg`)
+        .css('--waypoint-pitch-offset', `${curr_pitch.last - waypoint_pitch}`);
 
     update_aoa();
     set_target_pitch(target_pitch);
@@ -433,6 +437,9 @@ function display_nearest_airport(lat, lon, alt, err)
         ${(dist / 1852).toFixed(1)} TGT
     `);
     $('#nav-compass').text(Math.round(dir).toString().padStart(3, '0')).css('--nav-compass-heading', `${dir}deg`);
+
+    waypoint_yaw = dir;
+    waypoint_pitch = Math.atan2(vdist, dist * 3.28084) * 180 / Math.PI;
 }
 
 function build_bank_angle_scale()

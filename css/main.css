@@ -30,6 +30,8 @@ IPAD PRO 11" 3RD GEN ASPECT RATIO:  1668:2388   0.69849246231
     --target-pitch-angle: 0deg;
     --target-roll-angle: 0deg;
     --target-yaw-angle: 0deg;
+    --waypoint-pitch-offset: 0;
+    --waypoint-yaw-offset: 0;
     --pitch-offset: 0;
     --roll-offset: 0;
     --yaw-offset: 0;
@@ -298,6 +300,20 @@ hud-element#ghost-velocity-indicator ghost-velocity-indicator {
     height: var(--indicator-size);
     width: 0px;
     left: 50%;
+}
+
+hud-element#target-indicator {
+    --target-indicator-size: calc(var(--hud-width) * .05);
+
+    border: var(--hud-line-thickness) solid var(--color-fg);
+    transform: translate(
+        calc(var(--waypoint-yaw-offset) * var(--yaw-degree-size) - 50%),
+        calc(var(--waypoint-pitch-offset) * var(--pitch-degree-size) - 50%)
+    ) rotate(45deg);
+    height: var(--target-indicator-size);
+    width: var(--target-indicator-size);
+    left: 50%;
+    top: 50%;
 }
 
 hud-element#aoa-bracket {
