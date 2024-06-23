@@ -21,7 +21,7 @@ if not os.path.exists(PATH_CSV):
 
 with open(PATH_CSV, 'r', encoding="utf-8-sig") as f_csv:
     with open(PATH_JS, 'w', encoding="utf-8-sig") as f_js:
-        f_js.write('// THIS IS AUTO-GENERATED\nconst airports={\n')
+        f_js.write('// THIS IS AUTO-GENERATED\nconst airports={"NULL":{"name":"Null Island","lat":0,"lon":0,"alt":0,"country":"XX","region":"XX-XX"},\n')
         first = True
         unique_wgs84 = set()
 
