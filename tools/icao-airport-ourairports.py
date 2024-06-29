@@ -33,6 +33,14 @@ with open(PATH_CSV, 'r', encoding="utf-8-sig") as f_csv:
                 lon : str = row['longitude_deg'] or 'NaN'
                 alt : str = row['elevation_ft'] or '0'
                 name : str = row['name'].replace('"', '\\"')
+                type : str = (row['type'] or 'closed').lower()
+                type = 'CLS' if type == 'closed' else\
+                       'HEL' if type == 'heliport' else\
+                       'SMA' if type == 'small_airport' else\
+                       'SEA' if type == 'seaplane_base' else\
+                       'BAL' if type == 'balloonport' else\
+                       'MED' if type == 'medium_airport' else\
+                       'LAR' if type == 'large_airport' else 'UNK'
 
                 if lat == 'NaN' or lon == 'NaN':
                     continue
@@ -44,6 +52,6 @@ with open(PATH_CSV, 'r', encoding="utf-8-sig") as f_csv:
                     continue
                 else:
                     unique_wgs84.add((lat, lon))
-                    f_js.write(f'"{row["icao"]}":{{"name":"{name}","lat":{lat},"lon":{lon},"alt":{alt},"country":"{row["iso_country"] or "XX"}","region":"{row["iso_region"] or "XX-XX"}"}},\n')
+                    f_js.write(f'"{row["icao"]}":{{"name":"{name}","lat":{lat},"lon":{lon},"alt":{alt},"country":"{row["iso_country"] or "XX"}","region":"{row["iso_region"] or "XX-XX"}","type":"{type}"}},\n')
 
         f_js.write('};\n')

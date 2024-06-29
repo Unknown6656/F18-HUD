@@ -444,8 +444,9 @@ function display_nearest_airport(lat, lon, alt, err)
 
     $('#nav-info').html(`
         ${icao}<br/>
-        ${Math.round(vdist)} WYPT<br/>
-        ${(dist / 1852).toFixed(1)} TGT
+        ${Math.round(vdist)} <span ${airport['type'] == 'CLS' ? 'blink' : ''}>${airport['type']}</span><br/>
+        ${(dist / 1852).toFixed(1)} TGT<br/>
+        WYPT
     `);
     $('#nav-compass').text(Math.round(dir).toString().padStart(3, '0')).css('--nav-compass-heading', `${dir}deg`);
 
