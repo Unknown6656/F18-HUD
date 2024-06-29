@@ -1,5 +1,7 @@
 "use strict";
 
+
+
 $.prototype.hasAttr = function(attr)
 {
     return this.attr(attr) !== undefined;
@@ -178,13 +180,22 @@ function set_pitch(angle)
     const offset = (center - angle) * 4;
     let html = '';
 
-    for (let deg = center + 30; deg >= center - 30; deg -= 10)
+    const incr = root.hasAttr('pitch5') ? 5 : 10;
+
+    for (let deg = center + 30; deg >= center - 30; deg -= incr)
+    {
+        let angle = Math.abs(deg);
+
+        if (!!(angle % 10) && !(angle % 5))
+            angle = '';
+
         html += `
         <pitch-ladder-tick ${deg == 0 ? 'zero' : deg < 0 ? 'neg' : 'pos'}>
-            <left-bracket angle="${Math.abs(deg)}"></left-bracket>
-            <right-bracket angle="${Math.abs(deg)}"></right-bracket>
+            <left-bracket angle="${angle}"></left-bracket>
+            <right-bracket angle="${angle}"></right-bracket>
         </pitch-ladder-tick>
         `;
+    }
 
     pitch_ladder.html(html + '<pitch-ladder-tick></pitch-ladder-tick>')
                 .css('--pitch', `${offset}%`);
@@ -621,6 +632,7 @@ function on_device_orientation_changed()
 if (location.protocol == 'http:')
     location.href = `https:${location.href.substring(location.protocol.length)}`;
 
+
 hud_mode_indicator.click(switch_orientation);
 
 $('#start-button').click(() =>
@@ -635,6 +647,7 @@ $('#speed-g-aoa-info *, #speed-g-aoa-info').click(() =>
     peak_g = 0;
     Cookies.set(COOKIE_MAX_GLOAD, '0');
 });
+
 
 build_bank_angle_scale();
 reset();

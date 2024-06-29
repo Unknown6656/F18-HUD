@@ -434,6 +434,10 @@ hud-element#pitch-ladder {
     top: 50%;
 }
 
+:root[pitch5] hud-element#pitch-ladder {
+    --pitch-tick-height: calc(var(--pitch-degree-size) * 2.5);
+}
+
 hud-element#pitch-ladder pitch-ladder-tick {
     flex-shrink: 0;
     text-align: center;

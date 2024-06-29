@@ -1,5 +1,13 @@
 <!DOCTYPE html>
-<html -debug thin>
+<!--
+    Options:
+        [debug]     - display F-18 HUD in debug mode (no mirrioring, show DOM element bounding boxes, etc.)
+        [thin]      - display F-18 HUD using thin font ('HornetDisplay' instead of 'GlassGauge')
+        [pitch5]    - display F-18 HUD with 5-degree pitch ladder increments instead of 10-degree increments
+-->
+<html thin
+     -debug
+      pitch5>
     <head>
         <link rel="stylesheet" href="css/main.css"/>
         <meta name="viewport" content="width=device-width,
@@ -73,8 +81,8 @@
                     4.5 STL
                 </hud-element>
                 <hud-element id="nav-info">
-                    000 WYPT<br/>
                     NULL<br/>
+                    000 WYPT<br/>
                     0.0 TGT<br/>
                 </hud-element>
                 <hud-element id="hud-mode-indicator" mode="L"></hud-element>
