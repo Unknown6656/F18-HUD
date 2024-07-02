@@ -21,9 +21,18 @@ It is intended to be shown in full-screen mode on an Android- or iOS-Tablet, whi
 
 ## <a name="_install"></a>
 # Installation
-1. Clone this repository using `git clone https://github.com/Unknown6656/F18-HUD`
-2. Install python.
-3. Install [Flask](https://flask.palletsprojects.com/en/3.0.x/) using `pip install flask`
+You may deploy this web app with or without using Docker.
+
+## Installation using Docker
+1. [Download/install Docker](https://www.docker.com/get-started/).
+2. Clone this repository using `git clone https://github.com/Unknown6656/F18-HUD`.
+3. Run the command `docker compose build`.
+4. Run the web server using `docker compose up`.
+
+## Installation without Docker
+1. Install python.
+2. Install [Flask](https://flask.palletsprojects.com/en/3.0.x/) using `pip install flask`.
+3. Clone this repository using `git clone https://github.com/Unknown6656/F18-HUD`.
 4. Run the web server using `python server.py`.
 
 This will open a HTTPS web server listening at `0.0.0.0:180`. The usage of a web server is only necessary for serving all web resources using HTTPS, which is required by mobile browsers when using the tablet's sensors, such as GPS, the gyroscope, magentometer, or accelerometer.
@@ -84,4 +93,10 @@ The following image represents the general layout of the F/A-18 HUD:
 ![](img/usage-09.jpeg)\
 _Please note that the iamge is mirrored along the vertical, as well as the horizontal axis. This is required for the correct display of the HUD in the car's windscreen._
 
-(TODO : explain the individual components, their function, and deviation from regular behaviour)
+
+
+## (TODO : explain the individual components, their function, and deviation from regular behaviour)
+- click on nav compass: switch pitch ladder increments
+- click on waterline indicator: fullscreen
+- click on g-load: reset peak
+- click on nav mode: change A/R/L
