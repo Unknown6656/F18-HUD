@@ -25,7 +25,7 @@ const calc = expr => expr;
 const COOKIE_HAS_INTERACTED = 'f18-interacted';
 const COOKIE_MAX_GLOAD = 'f18-max-g-load';
 const COOKIE_HUD_MODE = 'f18-hud-mode';
-// const COOKIE_HAS_INTERACTED = 'f18-interacted';
+const COOKIE_PITCH_LADDER_MODE = 'f18-pitch-ladder-mode'
 const DEG_TO_RAD = .0174532925199432957692369076848861271344287188854172545609719144;
 const SENSOR_INTERVAL = 35;
 const GHOST_ANGLE = 7;
@@ -454,6 +454,20 @@ function display_nearest_airport(lat, lon, alt, err)
     waypoint_pitch = Math.atan2(vdist, dist * 3.28084) * 180 / Math.PI;
 }
 
+function change_pitch_ladder_steps()
+{
+    if (root.hasAttr('pitch5'))
+    {
+        root.removeAttr('pitch5');
+        Cookies.remove(COOKIE_PITCH_LADDER_MODE);
+    }
+    else
+    {
+        root.attr('pitch5', true);
+        Cookies.set(COOKIE_PITCH_LADDER_MODE, '5');
+    }
+}
+
 function build_bank_angle_scale()
 {
     let html = '<bank-angle-triangle></bank-angle-triangle>';
@@ -629,29 +643,43 @@ function on_device_orientation_changed()
         ;// otherwise do nothing (for now)
 }
 
+function initialize()
+{
+    hud_mode_indicator.click(switch_orientation);
+
+    $('#start-button').click(() =>
+    {
+        Cookies.set(COOKIE_HAS_INTERACTED, 'true', { expires: 30 });
+
+        make_fullscreen();
+        start(this);
+    });
+    $('#waterline-indicator').click(make_fullscreen);
+    $('#speed-g-aoa-info *, #speed-g-aoa-info').click(() => 
+    {
+        peak_g = 0;
+        Cookies.set(COOKIE_MAX_GLOAD, '0');
+    });
+    $('#nav-compass').click(change_pitch_ladder_steps);
+
+
+    build_bank_angle_scale();
+    reset();
+    
+    if (Cookies.get(COOKIE_PITCH_LADDER_MODE) == '5')
+        root.attr('pitch5', true);
+    else
+        root.removeAttr('pitch5');
+
+    if (Cookies.get(COOKIE_HAS_INTERACTED))
+        setTimeout(autostart, 1);
+
+    // if ('serviceWorker' in navigator)
+    //     navigator.serviceWorker.register('offline.js');
+}
+
 
 if (location.protocol == 'http:')
     location.href = `https:${location.href.substring(location.protocol.length)}`;
-
-
-hud_mode_indicator.click(switch_orientation);
-
-$('#start-button').click(() =>
-{
-    Cookies.set(COOKIE_HAS_INTERACTED, 'true', { expires: 30 });
-
-    start(this);
-});
-$('#waterline-indicator').click(make_fullscreen);
-$('#speed-g-aoa-info *, #speed-g-aoa-info').click(() => 
-{
-    peak_g = 0;
-    Cookies.set(COOKIE_MAX_GLOAD, '0');
-});
-
-
-build_bank_angle_scale();
-reset();
-
-if (Cookies.get(COOKIE_HAS_INTERACTED))
-    setTimeout(autostart, 1);
+else
+    initialize();
