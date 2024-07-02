@@ -25,17 +25,31 @@ You may deploy this web app with or without using Docker.
 
 ## Installation using Docker
 1. [Download/install Docker](https://www.docker.com/get-started/).
-2. Clone this repository using `git clone https://github.com/Unknown6656/F18-HUD`.
-3. Run the command `docker compose build`.
-4. Run the web server using `docker compose up`.
+2. Run the following commands:
+   ```bash
+   git clone https://github.com/Unknown6656/F18-HUD
+   docker compose build
+   docker compose up
+   ```
 
 ## Installation without Docker
-1. Install python.
-2. Install [Flask](https://flask.palletsprojects.com/en/3.0.x/) using `pip install flask`.
-3. Clone this repository using `git clone https://github.com/Unknown6656/F18-HUD`.
-4. Run the web server using `python server.py`.
+1. [Download/Install python](https://www.python.org/downloads/) (you can use `sudo apt install python3` on Linux).
+2. Run the following commands:
+   ```batch
+   git clone https://github.com/Unknown6656/F18-HUD
+   pip install -r requirements.txt
+   python server.py
+   ```
+   Or alternatively:
+   ```bash
+   git clone https://github.com/Unknown6656/F18-HUD
+   pip3 install -r requirements.txt
+   chmod +x server.py
+   ./server.py
+   ```
 
-This will open a HTTPS web server listening at `0.0.0.0:180`. The usage of a web server is only necessary for serving all web resources using HTTPS, which is required by mobile browsers when using the tablet's sensors, such as GPS, the gyroscope, magentometer, or accelerometer.
+## Notes
+Both installation methods will open a HTTPS web server listening at `0.0.0.0:180`. The usage of a web server is only necessary for serving all web resources using HTTPS, which is required by mobile browsers when using the tablet's sensors, such as GPS, the gyroscope, magentometer, or accelerometer.
 
 > [!IMPORTANT]
 > This HUD has been optimized for the [2018 Apple iPad Pro 11" (3<sup>rd</sup> Generation)](https://support.apple.com/en-us/111897). The behaviour of the HUD may therefore vary on other devices.
