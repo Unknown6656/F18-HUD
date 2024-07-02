@@ -1,0 +1,10 @@
+version: '3'
+services:
+  f18:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 180:180
+    volumes:
+      - .:/f18
