@@ -303,9 +303,8 @@ function set_inertia_yaw(angle)
     angle = normalize_angle(angle);
     inertia_yaw = angle;
 
-    /////// TODO ///////
-
-    ghost_indicator.css('--yaw-diff', inertia_yaw - curr_yaw.value);
+    $('#gps-heading-indicator').css('--gps-yaw-offset', inertia_yaw - curr_yaw.value);
+    // ghost_indicator.css('--yaw-diff', inertia_yaw - curr_yaw.value);
     root.css('--inertia-yaw-angle', `${angle}deg`);
 }
 

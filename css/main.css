@@ -302,6 +302,19 @@ hud-element#ghost-velocity-indicator ghost-velocity-indicator {
     left: 50%;
 }
 
+hud-element#gps-heading-indicator {
+    --target-indicator-size: calc(var(--hud-width) * .05);
+    --gps-yaw-offset: 0;
+
+    border-bottom: var(--gps-heading-indicator-size) solid var(--color-fg);
+    border-top: var(--gps-heading-indicator-size) solid var(--color-fg);
+    transform: translate(calc(var(--gps-yaw-offset) * var(--yaw-degree-size) - 50%), -50%);
+    height: calc(var(--gps-heading-indicator-size) * 3);
+    width: var(--hud-line-thickness);
+    left: 50%;
+    top: 50%;
+}
+
 hud-element#target-indicator {
     --target-indicator-size: calc(var(--hud-width) * .05);
 
