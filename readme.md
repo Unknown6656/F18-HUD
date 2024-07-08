@@ -18,7 +18,7 @@ Table of contents:
 This project is a minimalistic webpage replicating the head-up display (HUD) of an [McDonnell Douglas F/A-18 Hornet fighter jet](https://en.wikipedia.org/wiki/McDonnell_Douglas_F/A-18_Hornet).
 It is intended to be shown in full-screen mode on an Android- or iOS-Tablet, which is placed under a car's windscreen, in order to simulate the experience of sitting in an F/A-18 whilst driving:
 
-<!-- ![](img/usage-00.jpg) -->
+![](img/usage-00.jpg)
 ![](img/usage-01.jpeg)
 
 
