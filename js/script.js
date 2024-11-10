@@ -80,6 +80,8 @@ const smoothing = class
     };
 }
 
+const nosleep = new NoSleep();
+
 const root = $(':root');
 const heading_tape = $('#heading-tape');
 const pitch_ladder = $('#pitch-ladder');
@@ -616,6 +618,8 @@ function make_fullscreen()
         document.exitFullscreen();
 
     $('body')[0].requestFullscreen();
+
+    nosleep.enable();
 }
 
 function switch_orientation()
