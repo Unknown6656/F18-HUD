@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.14-alpine
 WORKDIR /f18
 
 COPY requirements.txt .
